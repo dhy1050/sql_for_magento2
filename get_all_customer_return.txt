@@ -1,0 +1,63 @@
+/**
+*get list of customer who make full return
+**/
+
+SELECT firstname,lastname,email,order_times as toal_order_number
+FROM
+	(
+		SELECT ce.entity_id, COUNT(so.customer_id) as order_times, ce.firstname,ce.lastname,ce.email
+		FROM sales_order so inner join customer_entity ce
+		ON so.customer_id = ce.entity_id
+		GROUP BY so.customer_id
+	) nce
+INNER JOIN sales_order so
+ON nce.entity_id = so.customer_id
+WHERE base_subtotal_refunded >= base_subtotal
+GROUP BY nce.entity_id;
+
+
+
+
+/**
+*get list of customer who make full ruturn and these customer are come back customers(which make more than one order)
+**/
+SELECT firstname,lastname,email
+FROM
+	(
+		SELECT entity_id,firstname,lastname,email,order_times
+		FROM
+		(
+			SELECT ce.entity_id, COUNT(so.customer_id) as order_times, ce.firstname,ce.lastname,ce.email
+			FROM sales_order so inner join customer_entity ce
+			ON so.customer_id = ce.entity_id
+			GROUP BY so.customer_id
+		) abc
+		WHERE order_times > 1
+	) nce
+INNER JOIN sales_order so
+ON nce.entity_id = so.customer_id
+WHERE base_subtotal_refunded >= base_subtotal
+GROUP BY nce.entity_id;
+
+
+/**
+*get list of customer that make full ruturn and this order is his first order
+**/
+SELECT firstname,lastname,email
+FROM
+	(
+		SELECT entity_id,firstname,lastname,email,order_times
+		FROM
+		(
+			SELECT ce.entity_id, COUNT(so.customer_id) as order_times, ce.firstname,ce.lastname,ce.email
+			FROM sales_order so inner join customer_entity ce
+			ON so.customer_id = ce.entity_id
+			GROUP BY so.customer_id
+		) abc
+		WHERE order_times = 1
+	) nce
+INNER JOIN sales_order so
+ON nce.entity_id = so.customer_id
+WHERE base_subtotal_refunded >= base_subtotal
+GROUP BY nce.entity_id;
+
