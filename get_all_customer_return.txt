@@ -12,7 +12,7 @@ FROM
 	) nce
 INNER JOIN sales_order so
 ON nce.entity_id = so.customer_id
-WHERE base_subtotal_refunded >= base_subtotal
+WHERE subtotal_refunded >= subtotal
 GROUP BY nce.entity_id;
 
 
@@ -36,13 +36,14 @@ FROM
 	) nce
 INNER JOIN sales_order so
 ON nce.entity_id = so.customer_id
-WHERE base_subtotal_refunded >= base_subtotal
+WHERE subtotal_refunded >= subtotal
 GROUP BY nce.entity_id;
 
 
 /**
 *get list of customer that make full ruturn and this order is his first order
 **/
+SELECT firstname,lastname,email
 SELECT firstname,lastname,email
 FROM
 	(
@@ -58,6 +59,6 @@ FROM
 	) nce
 INNER JOIN sales_order so
 ON nce.entity_id = so.customer_id
-WHERE base_subtotal_refunded >= base_subtotal
+WHERE subtotal_refunded >= subtotal
 GROUP BY nce.entity_id;
 
