@@ -44,7 +44,6 @@ GROUP BY nce.entity_id;
 *get list of customer that make full ruturn and this order is his first order
 **/
 SELECT firstname,lastname,email
-SELECT firstname,lastname,email
 FROM
 	(
 		SELECT entity_id,firstname,lastname,email,order_times
