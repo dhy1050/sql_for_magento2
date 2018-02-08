@@ -1,4 +1,4 @@
-/*****Magento2*****/
+/*****Magento Two*****/
 
 /**
 *Get full refund customer inculded guest
@@ -17,73 +17,49 @@ ORDER BY nso.numbers_of_order_time DESC;
 
 
 
-/**
-*get list of customer who make full return
-**/
-
-SELECT firstname,lastname,email,order_times as toal_order_number
-FROM
-	(
-		SELECT ce.entity_id, COUNT(so.customer_id) as order_times, ce.firstname,ce.lastname,ce.email
-		FROM sales_order so inner join customer_entity ce
-		ON so.customer_id = ce.entity_id
-		GROUP BY so.customer_id
-	) nce
-INNER JOIN sales_order so
-ON nce.entity_id = so.customer_id
-WHERE subtotal_refunded >= subtotal
-GROUP BY nce.entity_id;
-
-
-
 
 /**
 *get list of customer who make full ruturn and these customer are come back customers(which make more than one order)
 **/
-SELECT firstname,lastname,email
-FROM
+SELECT so.customer_email, so.customer_firstname, so.customer_lastname, numbers_of_order_time
+FROM sales_order so LEFT JOIN 
 	(
-		SELECT entity_id,firstname,lastname,email,order_times
-		FROM
-		(
-			SELECT ce.entity_id, COUNT(so.customer_id) as order_times, ce.firstname,ce.lastname,ce.email
-			FROM sales_order so inner join customer_entity ce
-			ON so.customer_id = ce.entity_id
-			GROUP BY so.customer_id
-		) abc
-		WHERE order_times > 1
-	) nce
-INNER JOIN sales_order so
-ON nce.entity_id = so.customer_id
-WHERE subtotal_refunded >= subtotal
-GROUP BY nce.entity_id;
+		SELECT customer_email, COUNT(customer_email) as numbers_of_order_time
+		FROM sales_order
+		GROUP BY customer_email
+    ) nso
+ON so.customer_email = nso.customer_email
+WHERE so.subtotal_refunded >= so.subtotal and numbers_of_order_time > 1 
+GROUP BY so.customer_email, so.customer_firstname, so.customer_lastname,numbers_of_order_time
+ORDER BY nso.numbers_of_order_time DESC;
+
 
 
 /**
 *get list of customer that make full ruturn and this order is his first order
 **/
-SELECT firstname,lastname,email
-FROM
+SELECT so.customer_email, so.customer_firstname, so.customer_lastname, numbers_of_order_time
+FROM sales_order so LEFT JOIN 
 	(
-		SELECT entity_id,firstname,lastname,email,order_times
-		FROM
-		(
-			SELECT ce.entity_id, COUNT(so.customer_id) as order_times, ce.firstname,ce.lastname,ce.email
-			FROM sales_order so inner join customer_entity ce
-			ON so.customer_id = ce.entity_id
-			GROUP BY so.customer_id
-		) abc
-		WHERE order_times = 1
-	) nce
-INNER JOIN sales_order so
-ON nce.entity_id = so.customer_id
-WHERE subtotal_refunded >= subtotal
-GROUP BY nce.entity_id;
+		SELECT customer_email, COUNT(customer_email) as numbers_of_order_time
+		FROM sales_order
+		GROUP BY customer_email
+    ) nso
+ON so.customer_email = nso.customer_email
+WHERE so.subtotal_refunded >= so.subtotal and numbers_of_order_time = 1 
+GROUP BY so.customer_email, so.customer_firstname, so.customer_lastname,numbers_of_order_time
+ORDER BY nso.numbers_of_order_time DESC;
 
 
 
 
-/*****Magento1*****/
+
+
+/*****Magento One*****/
+
+/**
+*Get all customer that ever make full return
+**/
 SELECT so.customer_email, so.customer_firstname, so.customer_lastname, numbers_of_order_time
 FROM sales_flat_order so LEFT JOIN 
 	(
@@ -93,5 +69,37 @@ FROM sales_flat_order so LEFT JOIN
     ) nso
 ON so.customer_email = nso.customer_email
 WHERE so.subtotal_refunded >= so.subtotal 
+GROUP BY so.customer_email, so.customer_firstname, so.customer_lastname,numbers_of_order_time
+ORDER BY nso.numbers_of_order_time DESC;
+
+
+/**
+*Get customers first time make order and make full reutrn
+**/
+SELECT so.customer_email, so.customer_firstname, so.customer_lastname, numbers_of_order_time
+FROM sales_flat_order so LEFT JOIN 
+	(
+		SELECT customer_email, COUNT(customer_email) as numbers_of_order_time
+		FROM sales_flat_order
+		GROUP BY customer_email
+    ) nso
+ON so.customer_email = nso.customer_email
+WHERE so.subtotal_refunded >= so.subtotal and numbers_of_order_time = 1
+GROUP BY so.customer_email, so.customer_firstname, so.customer_lastname,numbers_of_order_time
+ORDER BY nso.numbers_of_order_time DESC;
+
+
+/**
+*Get customers who are come back and ever make full return
+**/
+SELECT so.customer_email, so.customer_firstname, so.customer_lastname, numbers_of_order_time
+FROM sales_flat_order so LEFT JOIN 
+	(
+		SELECT customer_email, COUNT(customer_email) as numbers_of_order_time
+		FROM sales_flat_order
+		GROUP BY customer_email
+    ) nso
+ON so.customer_email = nso.customer_email
+WHERE so.subtotal_refunded >= so.subtotal and numbers_of_order_time > 1
 GROUP BY so.customer_email, so.customer_firstname, so.customer_lastname,numbers_of_order_time
 ORDER BY nso.numbers_of_order_time DESC;
