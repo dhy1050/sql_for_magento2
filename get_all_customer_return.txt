@@ -1,3 +1,22 @@
+/*****Magento2*****/
+
+/**
+*Get full refund customer inculded guest
+**/
+SELECT so.customer_email, so.customer_firstname, so.customer_lastname, numbers_of_order_time
+FROM sales_order so LEFT JOIN 
+	(
+		SELECT customer_email, COUNT(customer_email) as numbers_of_order_time
+		FROM sales_order
+		GROUP BY customer_email
+    ) nso
+ON so.customer_email = nso.customer_email
+WHERE so.subtotal_refunded >= so.subtotal 
+GROUP BY so.customer_email, so.customer_firstname, so.customer_lastname,numbers_of_order_time
+ORDER BY nso.numbers_of_order_time DESC;
+
+
+
 /**
 *get list of customer who make full return
 **/
@@ -61,3 +80,18 @@ ON nce.entity_id = so.customer_id
 WHERE subtotal_refunded >= subtotal
 GROUP BY nce.entity_id;
 
+
+
+
+/*****Magento1*****/
+SELECT so.customer_email, so.customer_firstname, so.customer_lastname, numbers_of_order_time
+FROM sales_flat_order so LEFT JOIN 
+	(
+		SELECT customer_email, COUNT(customer_email) as numbers_of_order_time
+		FROM sales_flat_order
+		GROUP BY customer_email
+    ) nso
+ON so.customer_email = nso.customer_email
+WHERE so.subtotal_refunded >= so.subtotal 
+GROUP BY so.customer_email, so.customer_firstname, so.customer_lastname,numbers_of_order_time
+ORDER BY nso.numbers_of_order_time DESC;
