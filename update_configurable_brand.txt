@@ -1,3 +1,7 @@
+/**
+*update for style start with T or L
+*
+**/
 UPDATE catalog_product_entity_int AS cpi
 LEFT JOIN catalog_product_entity cp
   ON cp.entity_id=cpi.entity_id
@@ -5,4 +9,17 @@ SET cpi.value=687
 WHERE (cpi.value=46)
 AND cp.type_id='configurable'
 AND (cp.sku LIKE "T%" OR cp.sku LIKE "L%")
+;
+
+
+/**
+*update for style start with Q
+**/
+UPDATE catalog_product_entity_int AS cpi
+LEFT JOIN catalog_product_entity cp
+	   ON cp.entity_id=cpi.entity_id
+SET cpi.value=687
+WHERE (cpi.value=46)
+	AND (cp.type_id='configurable')
+	AND (cp.sku LIKE "Q%")
 ;
