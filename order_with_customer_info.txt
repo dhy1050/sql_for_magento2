@@ -1,4 +1,9 @@
-SELECT increment_id AS order_id, so.customer_id, customer_email, soa.street, soa.city, soa.region, soa.postcode 
-FROM sales_order so LEFT JOIN
+SELECT increment_id AS order_id, so.customer_id, so.firstname, so.lastname, customer_email, soa.street, soa.city, soa.region, soa.postcode 
+FROM (
+	SELECT sales_order.increment_id, customer_id, sales_order.customer_email,billing_address_id, customer_entity.firstname, customer_entity.lastname FROM sales_order LEFT JOIN
+    customer_entity 
+    ON sales_order.customer_id = customer_entity.entity_id
+) so
+LEFT JOIN
 sales_order_address soa
 ON so.billing_address_id = soa.entity_id;
