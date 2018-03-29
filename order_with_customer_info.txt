@@ -1,0 +1,4 @@
+SELECT increment_id AS order_id, so.customer_id, customer_email, soa.street, soa.city, soa.region, soa.postcode 
+FROM sales_order so LEFT JOIN
+sales_order_address soa
+ON so.billing_address_id = soa.entity_id;
