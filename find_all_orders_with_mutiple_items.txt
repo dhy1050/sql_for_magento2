@@ -1,0 +1,23 @@
+ SELECT  so.increment_id AS order_id,
+                    so.created_at AS order_date,
+                    soi.sku,
+                    soi.qty_ordered AS qty
+              FROM  sales_order so
+              JOIN  sales_order_item soi
+                ON  soi.order_id = so.entity_id
+               AND  soi.parent_item_id IS NULL
+             WHERE  so.created_at >= '2018-01-29'
+               AND  so.entity_id IN (
+                      SELECT  entity_id
+                        FROM  (
+                                  SELECT  so.entity_id,
+                                          COUNT(soi.item_id) as item_count
+                                    FROM  sales_order so
+                                    JOIN  sales_order_item soi
+                                      ON  soi.order_id = so.entity_id
+                                     AND  soi.parent_item_id IS NULL
+                                GROUP BY  so.entity_id
+                              ) abc
+                       WHERE  item_count > 1
+                    )
+          ORDER BY  so.created_at ASC
