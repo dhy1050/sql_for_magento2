@@ -1,0 +1,17 @@
+SELECT fo.order_id, soi.sku, soi.name AS item_name, soi.qty_ordered, fo.customer_id, fo.firstname, fo.lastname, fo.customer_email, fo.street, fo.city, fo.region, fo.postcode, fo.base_subtotal_incl_tax
+FROM 
+(
+	SELECT so.entity_id, so.increment_id AS order_id, so.customer_id, so.firstname, so.lastname, so.customer_email, soa.street, soa.city, soa.region, soa.postcode, so.base_subtotal_incl_tax 
+	FROM 
+    (
+		SELECT sales_order.entity_id, sales_order.increment_id, customer_id, sales_order.customer_email,billing_address_id, customer_entity.firstname, customer_entity.lastname, base_subtotal_incl_tax 
+		FROM sales_order LEFT JOIN
+		customer_entity 
+		ON sales_order.customer_id = customer_entity.entity_id
+	) so
+	LEFT JOIN
+	sales_order_address soa
+	ON so.billing_address_id = soa.entity_id
+) fo
+LEFT JOIN sales_order_item soi
+ON fo.entity_id = soi.order_id AND soi.parent_item_id >= 1;
