@@ -1,0 +1,49 @@
+USE magento;
+
+SELECT fo.order_id, soi.sku, soi.name AS item_name, soi.qty_ordered, soi.item_color, soi.item_size, fo.customer_id, fo.firstname, fo.lastname, fo.customer_email, fo.street, fo.city, fo.region, fo.postcode, fo.base_subtotal_incl_tax,fo.created_at, fo.status AS order_status
+FROM 
+(
+	SELECT so.entity_id, so.increment_id AS order_id, so.customer_id, so.firstname, so.lastname, so.customer_email, soa.street, soa.city, soa.region, soa.postcode, so.base_subtotal_incl_tax, so.status,so.created_at 
+	FROM 
+    (
+		SELECT sales_order.entity_id, sales_order.increment_id, customer_id, sales_order.customer_email,billing_address_id, customer_entity.firstname, customer_entity.lastname, base_subtotal_incl_tax, sales_order.created_at,sales_order.status 
+		FROM sales_order LEFT JOIN
+		customer_entity 
+		ON sales_order.customer_id = customer_entity.entity_id
+        WHERE sales_order.status="processing" OR sales_order.status="pending" OR sales_order.status="complete"
+	) so
+	LEFT JOIN
+	sales_order_address soa
+	ON so.billing_address_id = soa.entity_id
+) fo
+LEFT JOIN 
+(
+	SELECT *
+    FROM 
+	sales_order_item soi
+    LEFT JOIN
+    (
+		SELECT ic.product_id AS product_id_attr, ic.item_color, isize.item_size
+		FROM
+		(
+			(
+			SELECT cv.entity_id AS product_id, cv.attribute_id, cv.value, ev.value AS item_color
+			FROM catalog_product_entity_varchar cv
+			LEFT JOIN eav_attribute_option_value ev
+			ON cv.value=ev.option_id
+			where cv.attribute_id=138
+			) ic
+			LEFT JOIN
+			(
+			SELECT cv.entity_id AS product_id, cv.attribute_id, cv.value, ev.value AS item_size
+			FROM catalog_product_entity_varchar cv
+			LEFT JOIN eav_attribute_option_value ev
+			ON cv.value=ev.option_id
+			where cv.attribute_id=157
+			) isize
+			ON ic.product_id = isize.product_id
+		)
+    ) attr
+	ON soi.product_id=attr.product_id_attr
+) soi
+ON fo.entity_id = soi.order_id AND soi.parent_item_id >= 1;
