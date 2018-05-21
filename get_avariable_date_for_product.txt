@@ -1,0 +1,17 @@
+select cpe2.sku, cped.store_id, cped.value
+
+from catalog_product_entity cpe
+
+join catalog_product_super_link cpsl
+
+on cpsl.parent_id = cpe.entity_id
+
+join catalog_product_entity cpe2
+
+on cpsl.product_id = cpe2.entity_id
+
+join catalog_product_entity_datetime cped
+
+on cped.entity_id = cpe2.entity_id
+
+where cpe.sku = 'k0032m-007';
