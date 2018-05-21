@@ -1,0 +1,88 @@
+	-- create void transactions for
+    -- specified order increments
+     INSERT INTO  sales_payment_transaction (
+                    parent_id,
+                    order_id,
+                    payment_id,
+                    txn_id,
+                    parent_txn_id,
+                    txn_type,
+                    is_closed,
+                    additional_information
+                  )
+          SELECT  spt.transaction_id AS parent_id,
+                  spt.order_id,
+                  spt.payment_id,
+                  CONCAT(spt.txn_id, '-void') AS txn_id,
+                  spt.txn_id AS parent_txn_id,
+                  'void' AS txn_type,
+                  1 AS is_closed,
+                  'null' AS additional_information
+            FROM  sales_order so
+            JOIN  sales_payment_transaction spt
+              ON  spt.order_id = so.entity_id
+           WHERE  so.increment_id IN (
+                    '7000010581',
+                    '7000010583',
+                    '7000010618',
+                    '7000010633',
+                    '7000010656',
+                    '7000010708',
+                    '7000010717',
+                    '7000010719',
+                    '7000010727',
+                    '7000010776',
+                    '7000010795',
+                    '7000010809',
+                    '7000010815',
+                    '7000010888',
+                    '7000010908',
+                    '7000011260',
+                    '7000011293',
+                    '7000011359',
+                    '7000011369',
+                    '7000011374',
+                    '7000011379',
+                    '7000011507',
+                    '7000011509',
+                    '7000011539',
+                    '7000011541',
+                    '7000011542',
+                    '7000011543',
+                    '7000011609',
+                    '7000011634',
+                    '7000011678',
+                    '7000011709',
+                    '7000011789',
+                    '7000011903',
+                    '7000011955',
+                    '7000012097',
+                    '7000012332',
+                    '7000012457',
+                    '7000012505',
+                    '7000012719',
+                    '7000012731',
+                    '7000012746',
+                    '7000012771',
+                    '7000012790',
+                    '7000012791',
+                    '7000012864',
+                    '7000012907',
+                    '7000012920'
+                  ) ;
+
+    -- mark related authorized transactions
+    -- as closed if they aren't already
+      UPDATE  sales_payment_transaction
+         SET  is_closed = 1
+       WHERE  transaction_id IN (
+                SELECT  *
+                  FROM  (
+                          SELECT  spt2.transaction_id
+                            FROM  sales_payment_transaction spt
+                            JOIN  sales_payment_transaction spt2
+                              ON  spt2.txn_id = spt.parent_txn_id
+                           WHERE  spt.txn_type = 'void'
+                             AND  spt2.is_closed = 0
+                        ) tmp
+              )
