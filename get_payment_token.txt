@@ -1,0 +1,9 @@
+ SELECT  vpt.*
+      FROM  sales_order so
+      JOIN  sales_order_payment sop
+        ON  sop.parent_id = so.entity_id
+      JOIN  vault_payment_token_order_payment_link vptopl
+        ON  vptopl.order_payment_id = sop.entity_id
+      JOIN  vault_payment_token vpt
+        ON  vptopl.payment_token_id = vpt.entity_id
+     WHERE  so.increment_id = '1000014439' ;
