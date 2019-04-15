@@ -1,48 +1,42 @@
 USE maggylondon;
 set @row_number=0;
-SELECT (@row_number := @row_number + 1) AS row_number, cpe.entity_id, cpe.sku, map.asin, map.* FROM catalog_product_entity cpe
+SELECT (@row_number := @row_number + 1) AS row_number, cpe.entity_id product_id, cpe.sku, map.asin, map.* 
+FROM catalog_product_entity cpe
 LEFT JOIN ml_amazon_product map ON cpe.entity_id = map.product_id 
-WHERE cpe.sku in(
-606013645315,
-606013574912,
-606013574929,
-606013574936,
-606013574943,
-606013574868,
-606013574875,
-606013574882,
-606013574899,
-606013645322,
-606013575209,
-606013575216,
-606013575223,
-606013575230,
-606013575155,
-606013575162,
-606013575179,
-606013575186,
-606013645339,
-606013547688,
-606013547787,
-606013547886,
-606013547985,
-606013547206,
-606013547305,
-606013547398,
-606013547480,
-606013645346,
-606013574646,
-606013574653,
-606013574660,
-606013574677,
-606013574592,
-606013574608,
-606013574615,
-606013574622,
-606013615776,
-60601365783,
-606013615790,
-606013615806,
-606013615813
+-- WHERE map.asin in (
+-- )
+WHERE 
+-- cpe.sku in(
+left (cpe.sku,6) in (
+'T1115M',      
+'T4223M',         
+'T4476M',     
+'T4476M',   
+'T4504M',       
+'T4504M',     
+'T4504P',
+'T4223W',         
+'T4476W',         
+'T4504W',        
+'T4417M',        
+'T4494M',         
+'T4556M',        
+'T4417P',         
+'T4556P',     
+'T4494W',         
+'T4556W',         
+'T4479W',         
+'T4434M',         
+'T4498M',         
+'T4499M',         
+'T4434P',         
+'T4499P',         
+'T4434W',         
+'T4499W',         
+'T4475M',         
+'T4475P'
 )
+-- order by field(cpe.sku,
+
+-- )
 ;
