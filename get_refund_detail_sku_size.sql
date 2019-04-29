@@ -7,7 +7,7 @@ SELECT
     so.created_at order_date,
     sc.created_at return_date,
     sci.sku,
-    ps.size,
+    eaov.value as size,
     sci.qty,
     sci.base_row_total as amount_without_tax,
     IFNULL(sci.base_tax_amount, '') base_tax_amount,
@@ -35,13 +35,9 @@ FROM
     sales_order_address soas on soas.entity_id = sc.shipping_address_id  -- for shipping address info
         LEFT JOIN
     sales_creditmemo_item sci ON sci.parent_id = sc.entity_id and sci.base_price > 0
-    LEFT JOIN
-    (
-		SELECT cpe.sku, eaov.value as size
-		FROM catalog_product_entity cpe
-		LEFT join catalog_product_entity_int cpei on cpei.entity_id = cpe.entity_id and attribute_id = 157
-		LEFT JOIN eav_attribute_option_value eaov on eaov.option_id =  cpei.value
-	) ps on ps.sku = sci.sku
+    left join catalog_product_entity cpe on cpe.sku = sci.sku
+	left join catalog_product_entity_int cpei on cpei.entity_id = cpe.entity_id and cpei.attribute_id = 157
+	left join eav_attribute_option_value eaov on eaov.option_id =  cpei.value
      
 ORDER BY order_id , refound_id
 ;
