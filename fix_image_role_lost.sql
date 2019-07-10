@@ -1,37 +1,37 @@
 use maggylondon;
 
 -- update catalog_product_entity_varchar images
--- -- select cpe.entity_id, cpe.sku, images.attribute_id, images.value, cpemg.value
--- -- from catalog_product_entity_varchar images
--- join catalog_product_entity cpe
--- on cpe.entity_id = images.entity_id
--- and cpe.type_id = 'configurable'
--- join catalog_product_entity_media_gallery_value cpemgv
--- on cpemgv.entity_id = images.entity_id
--- and cpemgv.position = 0
--- join catalog_product_entity_media_gallery cpemg
--- on cpemg.value_id = cpemgv.value_id
+select cpe.entity_id, cpe.sku, images.attribute_id, images.value, cpemg.value
+from catalog_product_entity_varchar images
+join catalog_product_entity cpe
+on cpe.entity_id = images.entity_id
+-- and cpe.type_id = 'simple'
+join catalog_product_entity_media_gallery_value cpemgv
+on cpemgv.entity_id = images.entity_id
+and cpemgv.position = 0
+join catalog_product_entity_media_gallery cpemg
+on cpemg.value_id = cpemgv.value_id
 -- set images.value = cpemg.value
--- where images.attribute_id IN (87, 88, 89)
--- and images.value = 'no_selection'
+where images.attribute_id IN (87, 88, 89)
+and images.value = 'no_selection'
 ;
 
 -- SET SQL_SAFE_UPDATES = 0;
 -- update catalog_product_entity_varchar images
--- -- select cpe.entity_id, cpe.sku, images.attribute_id, images.value, cpemg.value
--- -- from catalog_product_entity_varchar images
--- join catalog_product_entity cpe
--- on cpe.entity_id = images.entity_id
--- and cpe.type_id = 'simple'
--- join catalog_product_entity_media_gallery_value cpemgv
--- on cpemgv.entity_id = images.entity_id
--- and cpemgv.position = 20
--- join catalog_product_entity_media_gallery cpemg
--- on cpemg.value_id = cpemgv.value_id
+ select cpe.entity_id, cpe.sku, images.attribute_id, images.value, cpemg.value
+ from catalog_product_entity_varchar images
+ join catalog_product_entity cpe
+ on cpe.entity_id = images.entity_id
+ and cpe.type_id = 'simple'
+ join catalog_product_entity_media_gallery_value cpemgv
+ on cpemgv.entity_id = images.entity_id
+ and cpemgv.position = 20
+ join catalog_product_entity_media_gallery cpemg
+ on cpemg.value_id = cpemgv.value_id
 -- set images.value = cpemg.value
--- where images.attribute_id IN (133)
--- and images.value = 'no_selection'
--- ;
+ where images.attribute_id IN (133)
+ and images.value = 'no_selection'
+ ;
 
 
 

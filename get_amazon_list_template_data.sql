@@ -1,7 +1,13 @@
-use maggylondon;
-select cpe.sku as upc, map.asin, concat(eaov_brand.value, " women's ", cpev.value," ", eaov_size.value, " ", eaov_color.value) as product_title, 
-eaov_brand.value as brand_name, eaov_size.value as size, eaov_color.value as color, 
-if(eaov_brand.value = "London Times", concat("https://londontimes.maggylondon.com/", cpev_url.value), concat("https://www.maggylondon.com/", cpev_url.value)) as manufactured_url
+select cpe.sku as upc, 
+map.asin, 
+concat(eaov_brand.value, " women's ", cpev.value," ", eaov_size.value, " ", eaov_color.value) as product_title, 
+eaov_brand.value as brand_name, 
+"women" as category,
+eaov_size.value as size, 
+eaov_color.value as color, 
+if(eaov_brand.value = "London Times", concat("https://londontimes.maggylondon.com/", cpev_url.value), concat("https://www.maggylondon.com/", cpev_url.value)) as manufactured_url,
+cpetd.value as description,
+concat("https://static.maggylondon.com/media/catalog/product/cache/7d52e0d1cdababac8b1cda1ea0223add", pimage.value) as image
 from catalog_product_entity cpe
 left join ml_amazon_product map on map.product_id = cpe.entity_id -- get ASIN
 -- GET brand name
@@ -19,8 +25,22 @@ left join catalog_product_entity_varchar cpev on  cpev.entity_id = cpe.entity_id
 LEFT JOIN catalog_product_super_link cpsl ON cpe.entity_id = cpsl.product_id
 LEFT JOIN catalog_product_entity cpe_parent ON cpsl.parent_id = cpe_parent.entity_id
 left join catalog_product_entity_varchar cpev_url on cpev_url.entity_id = cpe_parent.entity_id and cpev_url.attribute_id = 119
-
+-- Get product description
+left join catalog_product_entity_text cpetd on cpetd.entity_id = cpe_parent.entity_id and cpetd.attribute_id = 75
+-- Get product image
+left join 
+(
+select cmve.value_id, cmve.entity_id, cpem.value 
+from catalog_product_entity_media_gallery_value_to_entity cmve
+left join catalog_product_entity_media_gallery cpem on cpem.value_id = cmve.value_id 
+where cpem.value like "%main%"
+) pimage on pimage.entity_id = cpe_parent.entity_id
 where cpe.sku in 
 (
-606013681825
+641224122316,
+641224122293,
+641224122309,
+606013694382
 )
+
+
