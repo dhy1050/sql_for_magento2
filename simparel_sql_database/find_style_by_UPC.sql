@@ -1,11 +1,8 @@
 use ProdUser;
-select DISTINCT style, label, color, upc
+select DISTINCT style, label, color, upc, SIZE
 from StyleItem
 where upc in (
-'641224122293',
-'641224122309',
-'641224122316',
-'641224122330' 
+'641224110603'
 
 );
 
